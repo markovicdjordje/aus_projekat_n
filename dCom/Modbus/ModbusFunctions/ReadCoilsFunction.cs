@@ -34,7 +34,6 @@ namespace Modbus.ModbusFunctions
             Buffer.BlockCopy(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)p.StartAddress)), 0, request, 8, 2);
             Buffer.BlockCopy(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)p.Quantity)), 0, request, 10, 2);
             return request;
-            //throw new NotImplementedException();
         }
 
         /// <inheritdoc />
@@ -55,7 +54,6 @@ namespace Modbus.ModbusFunctions
                 result.Add(new Tuple<PointType, ushort>(PointType.DIGITAL_OUTPUT, (ushort)(p.StartAddress + i)), value);
             }
             return result;
-            //throw new NotImplementedException();
         }
     }
 }
