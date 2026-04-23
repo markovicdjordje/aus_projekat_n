@@ -24,7 +24,6 @@ namespace Modbus.ModbusFunctions
         /// <inheritdoc/>
         public override byte[] PackRequest()
         {
-            //TO DO: IMPLEMENT
             ModbusReadCommandParameters p = CommandParameters as ModbusReadCommandParameters;
             byte[] request = new byte[12];
             Buffer.BlockCopy(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)p.TransactionId)), 0, request, 0, 2);
@@ -41,7 +40,6 @@ namespace Modbus.ModbusFunctions
         /// <inheritdoc />
         public override Dictionary<Tuple<PointType, ushort>, ushort> ParseResponse(byte[] response)
         {
-            //TO DO: IMPLEMENT
             ModbusReadCommandParameters p = CommandParameters as ModbusReadCommandParameters;
             var result = new Dictionary<Tuple<PointType, ushort>, ushort>();
 
