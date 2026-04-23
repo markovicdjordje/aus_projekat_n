@@ -24,15 +24,32 @@ namespace Modbus.ModbusFunctions
         /// <inheritdoc />
         public override byte[] PackRequest()
         {
-            //TO DO: IMPLEMENT
-            throw new NotImplementedException();
+            ModbusWriteCommandParameters p = CommandParameters as ModbusWriteCommandParameters;
+            byte[] request = new byte[12];
+            Buffer.BlockCopy(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)p.TransactionId)), 0, request, 0, 2);
+            Buffer.BlockCopy(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)p.ProtocolId)), 0, request, 2, 2);
+            Buffer.BlockCopy(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)p.Length)), 0, request, 4, 2);
+            request[6] = p.UnitId;
+            request[7] = p.FunctionCode;
+            Buffer.BlockCopy(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)p.OutputAddress)), 0, request, 8, 2);
+            // Coil: ON = 0xFF00, OFF = 0x0000
+            ushort coilValue = p.Value == 1 ? (ushort)0xFF00 : (ushort)0x0000;
+            Buffer.BlockCopy(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)coilValue)), 0, request, 10, 2);
+            return request;
         }
 
         /// <inheritdoc />
         public override Dictionary<Tuple<PointType, ushort>, ushort> ParseResponse(byte[] response)
         {
-            //TO DO: IMPLEMENT
-            throw new NotImplementedException();
+            ModbusWriteCommandParameters p = CommandParameters as ModbusWriteCommandParameters;
+            var result = new Dictionary<Tuple<PointType, ushort>, ushort>();
+
+            if (response[7] == p.FunctionCode + 0x80)
+                HandeException(response[8]);
+
+            ushort value = (ushort)(response[10] == 0xFF ? 1 : 0);
+            result.Add(new Tuple<PointType, ushort>(PointType.DIGITAL_OUTPUT, p.OutputAddress), value);
+            return result;
         }
     }
 }
