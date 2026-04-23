@@ -24,7 +24,6 @@ namespace Modbus.ModbusFunctions
         /// <inheritdoc />
         public override byte[] PackRequest()
         {
-            // Identično kao ReadCoilsFunction.PackRequest()
             ModbusReadCommandParameters p = CommandParameters as ModbusReadCommandParameters;
             byte[] request = new byte[12];
             Buffer.BlockCopy(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)p.TransactionId)), 0, request, 0, 2);
@@ -35,7 +34,6 @@ namespace Modbus.ModbusFunctions
             Buffer.BlockCopy(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)p.StartAddress)), 0, request, 8, 2);
             Buffer.BlockCopy(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)p.Quantity)), 0, request, 10, 2);
             return request;
-            //throw new NotImplementedException();
         }
 
         /// <inheritdoc />
@@ -50,8 +48,6 @@ namespace Modbus.ModbusFunctions
             for (int i = 0; i < p.Quantity; i++)
             {
                 ushort value = (ushort)IPAddress.NetworkToHostOrder((short)BitConverter.ToUInt16(response, 9 + i * 2));
-                // ReadHoldingRegisters → PointType.ANALOG_OUTPUT
-                // ReadInputRegisters   → PointType.ANALOG_INPUT
                 result.Add(new Tuple<PointType, ushort>(PointType.ANALOG_OUTPUT, (ushort)(p.StartAddress + i)), value);
             }
             return result;
