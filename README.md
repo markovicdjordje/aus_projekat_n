@@ -1,1 +1,2 @@
-# aus_projekat_n
+#AUS projekat 
+Djordje Markovic PR69/2022
