@@ -34,29 +34,23 @@ namespace Modbus.ModbusFunctions
             Buffer.BlockCopy(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)p.StartAddress)), 0, request, 8, 2);
             Buffer.BlockCopy(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)p.Quantity)), 0, request, 10, 2);
             return request;
-            //throw new NotImplementedException();
         }
 
         /// <inheritdoc />
         public override Dictionary<Tuple<PointType, ushort>, ushort> ParseResponse(byte[] response)
         {
-            //TO DO: IMPLEMENT
             ModbusReadCommandParameters p = CommandParameters as ModbusReadCommandParameters;
             var result = new Dictionary<Tuple<PointType, ushort>, ushort>();
 
             if (response[7] == p.FunctionCode + 0x80)
                 HandeException(response[8]);
 
-            byte byteCount = response[8];
             for (int i = 0; i < p.Quantity; i++)
             {
-                int byteIndex = 9 + (i / 8);
-                int bitIndex = i % 8;
-                ushort value = (ushort)((response[byteIndex] >> bitIndex) & 1);
-                result.Add(new Tuple<PointType, ushort>(PointType.DIGITAL_OUTPUT, (ushort)(p.StartAddress + i)), value);
+                ushort value = (ushort)IPAddress.NetworkToHostOrder((short)BitConverter.ToUInt16(response, 9 + i * 2));
+                result.Add(new Tuple<PointType, ushort>(PointType.ANALOG_INPUT, (ushort)(p.StartAddress + i)), value);
             }
             return result;
-            //throw new NotImplementedException();
         }
     }
 }
