@@ -1,0 +1,7 @@
+STA 18
+TCP 48133
+DO_REG  1  1800  0  0  1  0  DO  @STOP
+DO_REG  1  1802  0  0  1  0  DO  @V1
+DO_REG  2  1805  0  0  1  0  DO  @P1
+IN_REG  1  1700  0  0  4095  0  AI  @L
+HR_INT  1  2200  0  0  4095  0  AO  @N1
