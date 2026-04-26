@@ -24,16 +24,22 @@ namespace Modbus.ModbusFunctions
         /// <inheritdoc />
         public override byte[] PackRequest()
         {
-            // Identično kao WriteSingleCoilFunction, bez coil konverzije
             ModbusWriteCommandParameters p = CommandParameters as ModbusWriteCommandParameters;
             byte[] request = new byte[12];
-            Buffer.BlockCopy(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)p.TransactionId)), 0, request, 0, 2);
-            Buffer.BlockCopy(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)p.ProtocolId)), 0, request, 2, 2);
-            Buffer.BlockCopy(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)p.Length)), 0, request, 4, 2);
+
+            request[0] = (byte)(p.TransactionId >> 8);
+            request[1] = (byte)(p.TransactionId);
+            request[2] = (byte)(p.ProtocolId >> 8);
+            request[3] = (byte)(p.ProtocolId);
+            request[4] = (byte)(p.Length >> 8);
+            request[5] = (byte)(p.Length);
             request[6] = p.UnitId;
             request[7] = p.FunctionCode;
-            Buffer.BlockCopy(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)p.OutputAddress)), 0, request, 8, 2);
-            Buffer.BlockCopy(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)p.Value)), 0, request, 10, 2);
+            request[8] = (byte)(p.OutputAddress >> 8);
+            request[9] = (byte)(p.OutputAddress);
+            request[10] = (byte)(p.Value >> 8);
+            request[11] = (byte)(p.Value);
+
             return request;
         }
 
